@@ -70,7 +70,9 @@ if($connection -> connect_error) {
     }
 
     if(empty($rowArray)) {
-      die("We are sorry, but we are booked at that time! Try again some other time!");
+      $_SESSION['response'] = "We are sorry, but we are fully booked at that time! Try again some other time!";
+      header("Location: sendResponse.php");
+      exit;
     } // if
 
     $idRoomToBeReserved = $rowArray['ID'];
