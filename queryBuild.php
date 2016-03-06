@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+<?php session_start();?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -46,6 +46,8 @@ if($connection -> connect_error) {
   list($date, $startTime, $endTime) = explode(" + ", $message);
 
   // Set the variables.
+  $startTime = $startTime . ":00";
+  $endTime = $endTime . ":00";
   $date = date("Y-m-d",strtotime($date));
   $startTime = date("H:i:s",strtotime($startTime));
   $endTime = date("H:i:s",strtotime($endTime));
@@ -55,24 +57,20 @@ if($connection -> connect_error) {
 
     // First check for rooms that have no reservations
     $query = "SELECT ID, Name FROM rooms LEFT JOIN reservations ON rooms.ID = reservations.ID_room
-            WHERE reservations.Date_res = '$date' AND reservations.ID_room IS NULL";
+            WHERE reservations.ID_room IS NULL";
     $queryResult = mysqli_query($connection, $query);
     $rowArray = mysqli_fetch_array($queryResult);
 
-    // If no rooms have no reservations, check for the first available one
     if(empty($rowArray)) {
-      $query = "SELECT * FROM rooms LEFT JOIN reservations ON rooms.ID = reservations.ID_room
-                  WHERE reservations.Date_res = '$date' AND (reservations.Start_time >= '$endTime'
-                  OR reservations.End_time <= '$startTime') ORDER BY End_time, ID_reservation DESC";
-
+      $query = "SELECT * from rooms where ID NOT IN(
+                SELECT ID_room FROM reservations JOIN rooms on reservations.ID_room = rooms.ID
+                WHERE reservations.Date_res = '$date' and reservations.Start_time <= '$startTime' and reservations.End_time >= '$endTime')";
       $queryResult = mysqli_query($connection, $query);
-      $okToGo = false;
       $rowArray = mysqli_fetch_array($queryResult);
+    }
 
-      if(empty($rowArray)) {
-        die("We are sorry, but we are booked at that time! Try again some other time!");
-      } // if
-
+    if(empty($rowArray)) {
+      die("We are sorry, but we are booked at that time! Try again some other time!");
     } // if
 
     $idRoomToBeReserved = $rowArray['ID'];

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require "/home/alex/StudentHack/twilio-php-master/Services/Twilio.php"; // Loads the library
+require "/home/alex/Twilio/twilio-php-master/Services/Twilio.php"; // Loads the library
 
 // Your Account Sid and Auth Token from twilio.com/user/account
 $sid = "AC377f38194b7c2ef80593aedae8be033f";
