@@ -15,5 +15,6 @@ $client->account->messages->sendMessage(
 
 session_unset();
 session_destroy();
+header("Location: http://4b7054f0.ngrok.io/StudentHack/index.html");
 exit;
 ?>
